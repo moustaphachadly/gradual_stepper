@@ -9,15 +9,15 @@ import 'package:intl/intl.dart';
 
 /// Default widget height.
 const double kStepperHeight = 44.0;
+
 /// Drag distance to reach to fire an action.
 const double kStepDistance = 0.1;
+
 /// Amount of time for animations.
 const Duration kAnimationDuration = Duration(milliseconds: 300);
 
 /// Determines the draggable counter state.
-enum StepperState {
-  stable, shouldIncrease, shouldDecrease
-}
+enum StepperState { stable, shouldIncrease, shouldDecrease }
 
 /// The concept of the widget highly inspired
 /// from [Rahiche/stepper_touch](https://github.com/Rahiche/stepper_touch)
@@ -32,14 +32,16 @@ class GradualStepper extends StatefulWidget {
     this.onChanged,
     this.locale,
     this.elevation = 0.0,
-    this.cornerRadius = kStepperHeight/2,
+    this.cornerRadius = kStepperHeight / 2,
     this.backgroundColor = Colors.grey,
     this.buttonsColor = Colors.white,
     this.counterElevation = 5.0,
-    this.counterCornerRadius = kStepperHeight/2,
+    this.counterCornerRadius = kStepperHeight / 2,
     this.counterBackgroundColor = Colors.white,
-    this.counterTextStyle = const TextStyle(fontSize: 24,),
-  }) : assert(initialValue != null),
+    this.counterTextStyle = const TextStyle(
+      fontSize: 24,
+    ),
+  })  : assert(initialValue != null),
         assert(minimumValue == null || minimumValue <= initialValue),
         assert(maximumValue == null || maximumValue >= initialValue),
         assert(stepValue != null && stepValue > 0),
@@ -150,10 +152,12 @@ class _Stepper2State extends State<GradualStepper>
     }
   }
 
-  bool get _canIncrease => (widget.maximumValue == null)
-      || (widget.maximumValue >= _value + widget.stepValue);
-  bool get _canDecrease => (widget.minimumValue == null)
-      || (widget.minimumValue <= _value - widget.stepValue);
+  bool get _canIncrease =>
+      (widget.maximumValue == null) ||
+      (widget.maximumValue >= _value + widget.stepValue);
+  bool get _canDecrease =>
+      (widget.minimumValue == null) ||
+      (widget.minimumValue <= _value - widget.stepValue);
 
   String get _formattedValue {
     return (_formatter != null) ? _formatter.format(_value) : '$_value';
@@ -182,7 +186,9 @@ class _Stepper2State extends State<GradualStepper>
     _value = widget.initialValue;
     _stepperState = StepperState.stable;
     _controller = AnimationController(
-      vsync: this, lowerBound: -0.5, upperBound: 0.5,
+      vsync: this,
+      lowerBound: -0.5,
+      upperBound: 0.5,
     )..value = 0;
     _animation = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset(1.5, 0.0))
         .animate(_controller);
@@ -255,10 +261,11 @@ class _Stepper2State extends State<GradualStepper>
               child: SlideTransition(
                 position: _animation,
                 child: FractionallySizedBox(
-                  widthFactor: 2/5,
+                  widthFactor: 2 / 5,
                   child: Material(
                     color: widget.counterBackgroundColor,
-                    borderRadius: BorderRadius.circular(widget.counterCornerRadius),
+                    borderRadius:
+                        BorderRadius.circular(widget.counterCornerRadius),
                     elevation: widget.counterElevation,
                     child: Center(
                       child: Text(
@@ -316,7 +323,8 @@ class _Stepper2State extends State<GradualStepper>
   }
 
   void _scheduleTimer() {
-    timer = Timer.periodic(Duration(milliseconds: timerInterval), _timerCallback);
+    timer =
+        Timer.periodic(Duration(milliseconds: timerInterval), _timerCallback);
   }
 
   void _timerCallback(Timer timer) {
@@ -332,7 +340,6 @@ class _Stepper2State extends State<GradualStepper>
   void _rightButtonPointerDown(PointerDownEvent event) {
     _resetTimer();
     state = StepperState.shouldIncrease;
-
   }
 
   void _leftButtonPointerDown(PointerDownEvent event) {
@@ -352,7 +359,8 @@ class _Stepper2State extends State<GradualStepper>
   /// * If increasing and counter value reaches max, returns snap value.
   /// * Otherwise returns 1 and counter position follows drag.
   double snapDividerFrom(double offset) {
-    final snap = (offset.isNegative && !_canDecrease) || (offset >= 0 && !_canIncrease);
+    final snap =
+        (offset.isNegative && !_canDecrease) || (offset >= 0 && !_canIncrease);
     return (_stepperState == StepperState.stable && snap) ? 5 : 1;
   }
 
@@ -397,6 +405,7 @@ class _Stepper2State extends State<GradualStepper>
   void _onPanEnd(DragEndDetails details) {
     _reset();
     _controller.stop();
-    _controller.animateTo(0.0, curve: Curves.bounceOut, duration: kAnimationDuration);
+    _controller.animateTo(0.0,
+        curve: Curves.bounceOut, duration: kAnimationDuration);
   }
 }
