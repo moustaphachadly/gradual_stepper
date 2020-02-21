@@ -1,0 +1,20 @@
+name: gradual_stepper
+version: 0.0.1
+description: >-
+  A flutter stepper widget for selecting values in natural ways.
+  Ideal for amount selection.
+homepage: https://github.com/moustaphachadly/gradual_stepper.git
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.15.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
