@@ -24,7 +24,7 @@ enum StepperState { stable, shouldIncrease, shouldDecrease }
 /// and [gmertk/GMStepper](https://github.com/gmertk/GMStepper).
 class GradualStepper extends StatefulWidget {
   const GradualStepper({
-    Key key,
+    super.key,
     this.initialValue = 0,
     this.minimumValue,
     this.maximumValue,
@@ -38,18 +38,14 @@ class GradualStepper extends StatefulWidget {
     this.counterElevation = 5.0,
     this.counterCornerRadius = kStepperHeight / 2,
     this.counterBackgroundColor = Colors.white,
-    this.counterTextStyle = const TextStyle(
-      fontSize: 24,
-    ),
-  })  : assert(initialValue != null),
-        assert(minimumValue == null || minimumValue <= initialValue),
-        assert(maximumValue == null || maximumValue >= initialValue),
-        assert(stepValue != null && stepValue > 0),
-        assert(elevation != null && elevation >= 0.0),
-        assert(cornerRadius != null && cornerRadius >= 0.0),
-        assert(counterElevation != null && counterElevation >= 0.0),
-        assert(counterCornerRadius != null && counterCornerRadius >= 0.0),
-        super(key: key);
+    this.counterTextStyle = const TextStyle(fontSize: 24),
+  }) : assert(minimumValue == null || minimumValue <= initialValue),
+       assert(maximumValue == null || maximumValue >= initialValue),
+       assert(stepValue > 0),
+       assert(elevation >= 0.0),
+       assert(cornerRadius >= 0.0),
+       assert(counterElevation >= 0.0),
+       assert(counterCornerRadius >= 0.0);
 
   /// The first displaying value of the stepper.
   /// Defaults to 0.
@@ -58,24 +54,24 @@ class GradualStepper extends StatefulWidget {
   /// The smallest value the counter can reach.
   /// Must be less than maximumValue.
   /// Restricted to [dart:core] int representation.
-  final int minimumValue;
+  final int? minimumValue;
 
   /// The greatest value the counter can reach.
   /// Must be more than minimumValue.
   /// Restricted to [dart:core] int representation.
-  final int maximumValue;
+  final int? maximumValue;
 
   /// The value added or subtracted when increasing or decreasing.
   /// Defaults to 1.
   final int stepValue;
 
   /// Called whenever the value of the stepper changed.
-  final ValueChanged<int> onChanged;
+  final ValueChanged<int>? onChanged;
 
   /// Locale for thousands separator.
   /// If the locale is not specified it will print in a basic format
   /// of one integer with no fraction digits.
-  final String locale;
+  final String? locale;
 
   /// The size of the shadow below the stepper.
   /// Defaults to 0.
@@ -118,16 +114,16 @@ class GradualStepper extends StatefulWidget {
 
 class _Stepper2State extends State<GradualStepper>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation _animation;
-  StepperState _stepperState;
-  NumberFormat _formatter;
-  int _value;
-  int _minimum;
-  int _maximum;
+  late AnimationController _controller;
+  late Animation<Offset> _animation;
+  late StepperState _stepperState;
+  NumberFormat? _formatter;
+  late int _value;
+  int? _minimum;
+  int? _maximum;
 
   /// Timer used for auto repeat option.
-  Timer timer;
+  Timer? timer;
 
   /// When the stepper reaches its top speed, it alters the value
   /// with a time interval of ~0.05 sec.
@@ -152,22 +148,28 @@ class _Stepper2State extends State<GradualStepper>
     }
   }
 
-  bool get _canIncrease =>
-      (widget.maximumValue == null) ||
-      (widget.maximumValue >= _value + widget.stepValue);
-  bool get _canDecrease =>
-      (widget.minimumValue == null) ||
-      (widget.minimumValue <= _value - widget.stepValue);
+  bool get _canIncrease {
+    final max = widget.maximumValue;
+    return (max == null) || (max >= _value + widget.stepValue);
+  }
+
+  bool get _canDecrease {
+    final min = widget.minimumValue;
+    return (min == null) || (min <= _value - widget.stepValue);
+  }
 
   String get _formattedValue {
-    return (_formatter != null) ? _formatter.format(_value) : '$_value';
+    if (_formatter case NumberFormat formatter) {
+      return formatter.format(_value);
+    }
+    return '$_value';
   }
 
   set value(int newValue) {
     setState(() => _value = newValue);
 
     if (widget.onChanged != null) {
-      widget.onChanged(_value);
+      widget.onChanged?.call(_value);
     }
   }
 
@@ -190,11 +192,13 @@ class _Stepper2State extends State<GradualStepper>
       lowerBound: -0.5,
       upperBound: 0.5,
     )..value = 0;
-    _animation = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset(1.5, 0.0))
-        .animate(_controller);
+    _animation = Tween<Offset>(
+      begin: Offset(0.0, 0.0),
+      end: Offset(1.5, 0.0),
+    ).animate(_controller);
 
-    if (widget.locale != null) {
-      _formatter = NumberFormat.decimalPattern(widget.locale);
+    if (widget.locale case String locale) {
+      _formatter = NumberFormat.decimalPattern(locale);
     }
   }
 
@@ -264,8 +268,9 @@ class _Stepper2State extends State<GradualStepper>
                   widthFactor: 2 / 5,
                   child: Material(
                     color: widget.counterBackgroundColor,
-                    borderRadius:
-                        BorderRadius.circular(widget.counterCornerRadius),
+                    borderRadius: BorderRadius.circular(
+                      widget.counterCornerRadius,
+                    ),
                     elevation: widget.counterElevation,
                     child: Center(
                       child: Text(
@@ -311,7 +316,7 @@ class _Stepper2State extends State<GradualStepper>
 
   void _resetTimer() {
     if (timer != null) {
-      timer.cancel();
+      timer?.cancel();
       timer = null;
       timerFireCount = 0;
     }
@@ -323,8 +328,10 @@ class _Stepper2State extends State<GradualStepper>
   }
 
   void _scheduleTimer() {
-    timer =
-        Timer.periodic(Duration(milliseconds: timerInterval), _timerCallback);
+    timer = Timer.periodic(
+      Duration(milliseconds: timerInterval),
+      _timerCallback,
+    );
   }
 
   void _timerCallback(Timer timer) {
@@ -395,9 +402,10 @@ class _Stepper2State extends State<GradualStepper>
         // limit
         // Show toast maybe
       } else {
-        state = (_controller.value.isNegative)
-            ? StepperState.shouldDecrease
-            : StepperState.shouldIncrease;
+        state =
+            (_controller.value.isNegative)
+                ? StepperState.shouldDecrease
+                : StepperState.shouldIncrease;
       }
     }
   }
@@ -405,7 +413,10 @@ class _Stepper2State extends State<GradualStepper>
   void _onPanEnd(DragEndDetails details) {
     _reset();
     _controller.stop();
-    _controller.animateTo(0.0,
-        curve: Curves.bounceOut, duration: kAnimationDuration);
+    _controller.animateTo(
+      0.0,
+      curve: Curves.bounceOut,
+      duration: kAnimationDuration,
+    );
   }
 }
