@@ -1,8 +1,23 @@
 # gradual_stepper
 
+## Help Palestine 🇵🇸
+
+[![ReadMeSupportPalestine](https://raw.githubusercontent.com/Safouene1/support-palestine-banner/master/banner-support.svg)](https://github.com/TheBSD/StandWithPalestine/blob/main/docs/README.md)
+
+<!-- shields -->
+![GitHub Stars][ico-github-stars]
+[![StandWithPalestine][ico-palestine]][link-palestine]
+
+[ico-github-stars]: https://img.shields.io/github/stars/moustaphachadly/gradual_stepper?style=flat-square
+
+[ico-palestine]: https://raw.githubusercontent.com/TheBSD/StandWithPalestine/main/badges/StandWithPalestine.svg
+
+[link-palestine]: https://github.com/TheBSD/StandWithPalestine/blob/main/docs/README.md
+<!-- ./shields -->
+
 A real world useful widget for selecting values in natural ways.
 
-<img src="steppergif.gif?raw=true" width="300"/>
+<img src="steppergif.gif?raw=true" width="540" alt="GIF video demonstrating the widget usage"/>
 
 ### Created & Maintained by
 
